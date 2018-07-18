@@ -1,12 +1,5 @@
 @Library('ciinabox') _
 
-/*
-  - Use the AWS CLI to find the latest snapshot
-  - Export this as an environment variable
-  - Pass it in as a parameter to the Python script
-  - If the Python script passes, use the env variable in the stack update.
-*/
-
 pipeline {
   environment {
     REGION = 'ap-southeast-2'
@@ -14,7 +7,7 @@ pipeline {
   }
 
   agent {
-
+    any
   }
 
   stages {
@@ -22,7 +15,7 @@ pipeline {
       steps {
         script {
           // Get the AWS account number
-          def accounts = ['prod': '400480216381', 'prod': '537712071186']
+          def accounts = ['dev': '753242587341', 'prod': '503752765912']
           ENV.FROM_ACCOUNT = accounts[ENV.FROM_ACCOUNT]
           ENV.TO_ACCOUNT = accounts[ENV.TO_ACCOUNT]
 
@@ -43,17 +36,14 @@ pipeline {
       steps {
         // Update the stack while keeping all of the same parameters except for the snapshot ID
         println("Updating the CloudFormation stack with the new snapshot '${snapshot}'.")
-        /*
         cloudformation(
           stackName: env.STACK_NAME,
           action: 'update',
           region: env.TO_REGION,
           accountId: env.TO_ACCOUNT,
-          parameters: ['RDSSnapshotID': $snapshot]
+          parameters: ['RDSSnapshotID': $snapshot],
           role: env.CIINABOX_ROLE
         )
-        */
-        echo $snapshot
       }
     }
   }
