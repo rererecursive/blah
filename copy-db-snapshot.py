@@ -7,6 +7,10 @@ Testing:
 4. Run the script. It should share the snapshot and copy it over.
 2. Run this script with from_account=mine, to_account=reference
 
+1. Create a new dev stack
+2. Update the Jenkins pipeline account numbers
+3. Create a Jenkins pipeline and run the job
+
 TODO: in the Jenkins pipeline, export the copied snapshot as an environment variable to use it in the next stage.
 '''
 
@@ -21,6 +25,7 @@ def main():
     from_region = os.environ['FROM_REGION']
     to_account = os.environ['TO_ACCOUNT']
     to_region = os.environ['TO_REGION']
+    stack_name = os.environ['STACK_NAME']
 
     '''
     from_account = sys.argv[1]
@@ -36,7 +41,7 @@ def main():
     else:
         to_client = get_rds_client(to_account, to_region)
 
-    engine = 'sqlserver-ex'
+    engine = 'sqlserver-web'
     environment_tag = 'prod'
     name_tag = 'prod-rds'
 
@@ -83,7 +88,7 @@ def main():
                     # If it's an old backup, delete it and copy over the new one. Otherwise, do nothing.
                     if is_old_backup(to_client, latest_snapshot, existing_snapshot):
                         print("Found old backup '%s' for RDS instance '%s'. Deleting..." % (existing_snapshot['DBSnapshotIdentifier'], instance_identifier))
-                        to_client.delete_db_snapshot(DBSnapshotIdentifier=existing_snapshot['DBSnapshotIdentifier'])
+                        #to_client.delete_db_snapshot(DBSnapshotIdentifier=existing_snapshot['DBSnapshotIdentifier'])
                         to_copy = True
 
     new_snapshot_identifier = latest_snapshot_identifier + '-copied-from-' + from_account
